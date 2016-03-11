@@ -24,10 +24,43 @@ namespace RespServer.Protocol
             }
         }
 
+        public bool ReadLine
+        {
+            get
+            {
+                if (Type == MarkerType.Integer || Type == MarkerType.Error)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         public RespMarker(MarkerType type, int length)
         {
             Type = type;
             Length = length;
+        }
+
+        public string Serialize()
+        {
+            switch (Type)
+            {
+                case MarkerType.Array:
+                    return String.Format("*{0}\r\n", Length);
+                case MarkerType.String:
+                    return String.Format("${0}\r\n", Length);
+                case MarkerType.Integer:
+                    return ":";
+                case MarkerType.Boolean:
+                    return "+";
+                case MarkerType.Error:
+                    return "-";
+                case MarkerType.EOF:
+                    return "-1";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace RespServer.Commands
+﻿using System.Collections.Generic;
+using RespServer.Protocol;
+
+namespace RespServer.Commands
 {
     interface ICommand
     {
-        void Execute();
+        IEnumerable<RespPart> Execute();
     }
 }

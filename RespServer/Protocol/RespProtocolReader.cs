@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace RespServer.Protocol
 {
@@ -14,9 +15,9 @@ namespace RespServer.Protocol
             switch (buffer[0])
             {
                 case (byte)'*':
-                    return new RespMarker(RespMarker.MarkerType.Array, BitConverter.ToInt32(buffer, 1));
+                    return new RespMarker(RespMarker.MarkerType.Array, int.Parse(Encoding.ASCII.GetString(buffer, 1, buffer.Length - 1)));
                 case (byte)'$':
-                    return new RespMarker(RespMarker.MarkerType.String, BitConverter.ToInt32(buffer, 1));
+                    return new RespMarker(RespMarker.MarkerType.String, int.Parse(Encoding.ASCII.GetString(buffer, 1, buffer.Length - 1)));
             }
 
             return new RespMarker(RespMarker.MarkerType.Error, -1);

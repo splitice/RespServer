@@ -23,7 +23,7 @@ namespace RespServer.Protocol
             }
         }
 
-        Stack<RespState> stack = new Stack<RespState>();
+        readonly Stack<RespState> _stack = new Stack<RespState>();
         private RespState _currentState;
         
         private object MessageHandleInternal(RespPart message)
@@ -33,7 +33,7 @@ namespace RespServer.Protocol
             {
                 if (_currentState != null)
                 {
-                    stack.Push(_currentState);
+                    _stack.Push(_currentState);
                 }
                 _currentState = new RespState(message.Marker.Length);
             }
@@ -41,31 +41,31 @@ namespace RespServer.Protocol
             {
                 if (_currentState == null)
                 {
-                    if (stack.Count == 0)
+                    if (_stack.Count == 0)
                     {
                         throw new Exception("Must be an array on the outer");
                     }
 
-                    _currentState = stack.Pop();
+                    _currentState = _stack.Pop();
                 }
 
                 if (_currentState.AddMember(message.DeserializeScalar()) == 0)
                 {
-                    if (stack.Count != 0)
+                    if (_stack.Count != 0)
                     {
                         int remaining;
                         do
                         {
                             var cs = _currentState;
-                            _currentState = stack.Pop();
+                            _currentState = _stack.Pop();
                             remaining = _currentState.AddMember(cs.CurrentMembers);
-                            if (stack.Count == 0)
+                            if (_stack.Count == 0)
                             {
                                 break;
                             }
                         } while (remaining == 0);
                     }
-                    if (stack.Count == 0)
+                    if (_stack.Count == 0)
                     {
                         ret = _currentState.CurrentMembers;
                     }
