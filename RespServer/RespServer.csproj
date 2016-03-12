@@ -63,12 +63,14 @@
     <Compile Include="Commands\CommandRegistry.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\RespCommunicator.cs" />
+    <Compile Include="Protocol\RespEvent.cs" />
     <Compile Include="RespConnection.cs" />
     <Compile Include="Protocol\RespMarker.cs" />
     <Compile Include="Protocol\RespParser.cs" />
     <Compile Include="Protocol\RespPart.cs" />
     <Compile Include="Protocol\RespProtocolReader.cs" />
-    <Compile Include="RespServer.cs" />
+    <Compile Include="RespServerListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

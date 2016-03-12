@@ -67,5 +67,18 @@ namespace RespServer.Tests
             Assert.AreEqual(3, innerArray.Count);
             Assert.IsTrue(innerArray[0].GetType() == typeof(byte[]));
         }
+
+        [TestCase()]
+        private void TestStringDeserialize1()
+        {
+            String input = "$10\r\n0123456789\r\n";
+
+
+        }
+        [TestCase()]
+        private void TestStringDeserialize2()
+        {
+            String input = "$10\r\n0123456789";
+        }
     }
 }

@@ -3,7 +3,7 @@ using RespServer.Protocol;
 
 namespace RespServer.Commands
 {
-    interface ICommand
+    public interface ICommand
     {
         IEnumerable<RespPart> Execute();
     }

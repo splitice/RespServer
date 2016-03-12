@@ -14,60 +14,68 @@ namespace RespServer
     {
         private ReactiveSocket _socket;
         public event EventHandler<EventArgs> OnDisconnect; 
-        private RespParser _parser = new RespParser();
         private CommandRegistry _commands;
+        private RespCommunicator _communicator;
 
         public RespConnection(ReactiveSocket socket, CommandRegistry commands)
         {
             _socket = socket;
             _commands = commands;
-
-            IObservable<RespPart> messages = from header in socket.Receiver.TakeWhile((a) => a != '\n').ToArray()
-                                             let marker = RespProtocolReader.ReadMarker(header.ToArray())
-                                             let body = marker.ReadLine ? socket.Receiver.TakeWhile((a) => a != '\n') : socket.Receiver.Take(marker.ReadLength)
-                                             select new RespPart(marker, body.ToEnumerable());
-
-            // Echo the incoming message with the same format.
-            messages.Subscribe(HandleCommand);
-            messages.Catch<RespPart,Exception>(tx => Observable.Empty<RespPart>());
-
-            socket.Disconnected += (a,e) => { if(OnDisconnect != null) OnDisconnect(this, e); };
+            _communicator = new RespCommunicator(socket.Receiver);
+            _communicator.MessageArrived += HandleCommand;
+            socket.Disconnected += (a, e) => { if (OnDisconnect != null) OnDisconnect(this, e); };
+            _communicator.Start();
         }
 
-        private void HandleCommand(RespPart message)
+        private void HandleCommand(object sender, RespEvent respEvent)
         {
-            var response = _parser.MessageHandle(message);
-
-            if (response != null && response.Count != 0)
+            IEnumerable<RespPart> outputParts = null;
+            if (respEvent.Exception != null)
             {
-                IEnumerable<RespPart> outputParts;
-                var commandName = response[0] as byte[];
-                if (commandName == null)
+                outputParts = new List<RespPart> { RespPart.Error(respEvent.Exception.Message) };
+            }
+            else
+            {
+                List<object> response = respEvent.Arguments;
+                if (response.Count != 0)
                 {
-                    outputParts = new List<RespPart> {RespPart.Error("The command must be supplied as a string")};
-                }
-                else
-                {
-                    var commandString = System.Text.Encoding.ASCII.GetString(commandName);
-                    var command = _commands.NewCommand(commandString,
-                        response.Skip(1).ToList());
-                    if (command == null)
+                    var commandName = response[0] as byte[];
+                    if (commandName == null)
                     {
-                        outputParts = new List<RespPart> {RespPart.Error(String.Format("Command {0} not found", commandString))};
+                        outputParts = new List<RespPart> {RespPart.Error("The command must be supplied as a string")};
                     }
                     else
                     {
-                        try
+                        var commandString = Encoding.ASCII.GetString(commandName);
+                        var command = _commands.NewCommand(commandString,
+                            response.Skip(1).ToList());
+                        if (command == null)
                         {
-                            outputParts = command.Execute();
+                            outputParts = new List<RespPart>
+                            {
+                                RespPart.Error(String.Format("Command {0} not found", commandString))
+                            };
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            outputParts = new List<RespPart> {RespPart.Error(String.Format("An Exception Occured: {0}", ex))};
+                            try
+                            {
+                                outputParts = command.Execute();
+                            }
+                            catch (Exception ex)
+                            {
+                                outputParts = new List<RespPart>
+                                {
+                                    RespPart.String(String.Format("An Exception Occured: {0}", ex))
+                                };
+                            }
                         }
                     }
                 }
+            }
 
+            if (outputParts != null)
+            {
                 foreach (var output in outputParts)
                 {
                     _socket.SendAsync(output.Serialize()).Wait();

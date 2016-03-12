@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RespServer.Protocol
 {
-    internal class RespPart
+    public class RespPart
     {
         private readonly RespMarker _marker;
         private readonly IEnumerable<byte> _body;
@@ -50,11 +50,17 @@ namespace RespServer.Protocol
         public byte[] Serialize()
         {
             String ret = _marker.Serialize();
-            if (_marker.ReadLength != 0)
+            if (_marker.Type == RespMarker.MarkerType.String || _marker.Type == RespMarker.MarkerType.Error)
             {
-                ret += Encoding.ASCII.GetString(Body.ToArray());
+                ret += Encoding.ASCII.GetString(Body.ToArray()) + "\r\n";
             }
             return Encoding.ASCII.GetBytes(ret);
+        }
+
+        public static RespPart String(string str)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(str);
+            return new RespPart(new RespMarker(RespMarker.MarkerType.String, data.Length), data);
         }
     }
 }

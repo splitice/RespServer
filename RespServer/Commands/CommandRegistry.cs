@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RespServer.Commands
 {
-    class CommandRegistry
+    public class CommandRegistry
     {
         private Dictionary<String, Func<List<object>, ICommand>> _commands = new Dictionary<string, Func<List<object>, ICommand>>();
         public ICommand NewCommand(String name, List<object> arguments)

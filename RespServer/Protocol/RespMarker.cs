@@ -2,9 +2,9 @@
 
 namespace RespServer.Protocol
 {
-    struct RespMarker
+    public struct RespMarker
     {
-        internal enum MarkerType
+        public enum MarkerType
         {
             Array, String, Integer, Boolean, Error, EOF
         }

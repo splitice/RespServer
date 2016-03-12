@@ -9,17 +9,17 @@ using RespServer.Commands;
 
 namespace RespServer
 {
-    class RespServer
+    public class RespServerListener
     {
         private readonly CommandRegistry _commands;
         private ReactiveListener _server;
         private HashSet<RespConnection> _connections = new HashSet<RespConnection>();
         public bool Started;
 
-        public RespServer(int port, CommandRegistry commands)
+        public RespServerListener(int port, CommandRegistry commands)
         {
             _commands = commands;
-            _server = new ReactiveListener(1055);
+            _server = new ReactiveListener(port);
         }
 
         public void Start()
