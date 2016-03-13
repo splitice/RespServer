@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RespServer.Helpers;
 
 namespace RespServer.Protocol
 {
@@ -41,9 +42,9 @@ namespace RespServer.Protocol
 
         public void Start()
         {
-            IObservable<RespPart> messages = from header in _observable.TakeWhile((a) => a != '\n').ToArray()
+            IObservable<RespPart> messages = from header in _observable.TakeWhileInclusive((a) => a != '\n').ToArray()
                                              let marker = RespProtocolReader.ReadMarker(header.ToArray())
-                                             let body = marker.ReadLine ? _observable.TakeWhile((a) => a != '\n') : _observable.Take(marker.ReadLength)
+                                             let body = marker.ReadLine ? _observable.TakeWhileInclusive((a) => a != '\n') : _observable.Take(marker.ReadLength)
                                              select new RespPart(marker, body.ToEnumerable());
 
             messages.Subscribe(HandleCommand);
