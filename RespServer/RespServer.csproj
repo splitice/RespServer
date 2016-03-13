@@ -55,6 +55,7 @@
     <Compile Include="Commands\CommandRegistry.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Mina\RespPartDecoder.cs" />
+    <Compile Include="Mina\RespPartEncoder.cs" />
     <Compile Include="Mina\RespProtocolFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\RespCommunicator.cs" />

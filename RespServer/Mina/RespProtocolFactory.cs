@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Mina.Filter.Codec.Demux;
+using RespServer.Protocol;
 
 namespace RespServer.Mina
 {
@@ -12,6 +13,7 @@ namespace RespServer.Mina
         public RespProtocolFactory()
         {
             AddMessageDecoder<RespPartDecoder>();
+            AddMessageEncoder<RespPart, RespPartEncoder>();
         }
     }
 }
