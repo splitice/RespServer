@@ -36,32 +36,25 @@ namespace RespServer
                 {
                     return new List<RespPart> {RespPart.Error("The command must be supplied as a string")};
                 }
-                else
+                var commandString = Encoding.ASCII.GetString(commandName);
+                var command = _commands.NewCommand(commandString, response.Skip(1).ToList());
+                if (command == null)
                 {
-                    var commandString = Encoding.ASCII.GetString(commandName);
-                    var command = _commands.NewCommand(commandString,
-                        response.Skip(1).ToList());
-                    if (command == null)
+                    return new List<RespPart>
                     {
-                        return new List<RespPart>
-                        {
-                            RespPart.Error(String.Format("Command {0} not found", commandString))
-                        };
-                    }
-                    else
+                        RespPart.Error(String.Format("Command {0} not found", commandString))
+                    };
+                }
+                try
+                {
+                    return command.Execute();
+                }
+                catch (Exception ex)
+                {
+                    return new List<RespPart>
                     {
-                        try
-                        {
-                            return command.Execute();
-                        }
-                        catch (Exception ex)
-                        {
-                            return new List<RespPart>
-                            {
-                                RespPart.String(String.Format("An Exception Occured: {0}", ex))
-                            };
-                        }
-                    }
+                        RespPart.String(String.Format("An Exception Occured: {0}", ex))
+                    };
                 }
             }
             return null;
