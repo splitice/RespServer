@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +14,8 @@ namespace RespServer.Example
         static void Main(string[] args)
         {
             var registry = new CommandRegistry();
-            RespServerListener server = new RespServerListener(7777, registry);
-            server.Start();
+            RespServerListener server = new RespServerListener(registry);
+            server.Start(new IPEndPoint(IPAddress.Any, 7777));
             while (server.Started)
             {
                 Thread.Sleep(1000);

@@ -62,5 +62,18 @@ namespace RespServer.Protocol
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        public static RespMarker ReadMarker(byte typeChar, String str)
+        {
+            switch (typeChar)
+            {
+                case (byte)'*':
+                    return new RespMarker(RespMarker.MarkerType.Array, int.Parse(str));
+                case (byte)'$':
+                    return new RespMarker(RespMarker.MarkerType.String, int.Parse(str));
+            }
+
+            return new RespMarker(RespMarker.MarkerType.Error, -1);
+        }
     }
 }

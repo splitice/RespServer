@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RespServer.Helpers;
 
 namespace RespServer.Protocol
 {
-    class RespCommunicator
+    /*class RespCommunicator
     {
         private RespParser _parser = new RespParser();
         private readonly IObservable<byte> _observable;
@@ -50,5 +48,5 @@ namespace RespServer.Protocol
             messages.Subscribe(HandleCommand);
             messages.Catch<RespPart, Exception>(tx => Observable.Empty<RespPart>());
         }
-    }
+    }*/
 }
