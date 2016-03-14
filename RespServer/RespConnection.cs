@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mina.Core.Future;
 using Mina.Core.Session;
 using RespServer.Commands;
 using RespServer.Protocol;
 
 namespace RespServer
 {
-    class RespConnection
+    public class RespConnection
     {
         private IoSession _socket;
         public event EventHandler<EventArgs> OnDisconnect; 
         private RespCommandRegistry _respCommands;
         private RespParser _parser = new RespParser();
+
+        public IoSession Socket
+        {
+            get { return _socket; }
+        }
 
         public RespConnection(IoSession socket, RespCommandRegistry respCommands)
         {
@@ -47,7 +53,7 @@ namespace RespServer
                 }
                 try
                 {
-                    return command.Execute();
+                    return command.Execute(this);
                 }
                 catch (Exception ex)
                 {

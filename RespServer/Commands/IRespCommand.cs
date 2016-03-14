@@ -5,6 +5,6 @@ namespace RespServer.Commands
 {
     public interface IRespCommand
     {
-        IEnumerable<RespPart> Execute();
+        IEnumerable<RespPart> Execute(RespConnection connection);
     }
 }
