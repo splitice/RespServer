@@ -4,6 +4,10 @@ mono:
   - latest
 git:
   depth: 300
+addons:
+  apt:
+    packages:
+    - realpath
 install:
   - sudo modprobe ip_conntrack
 script:
