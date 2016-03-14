@@ -55,7 +55,7 @@ namespace RespServer.Protocol
                 return new RespPart(new RespMarker(RespMarker.MarkerType.String, data.Length), data);
             }
             return new RespPart(new RespMarker(RespMarker.MarkerType.Error, data.Length), data);
-        }
+        }   
 
         public byte[] Serialize()
         {

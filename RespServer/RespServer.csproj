@@ -52,8 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandRegistry.cs" />
-    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\RespCommandRegistry.cs" />
+    <Compile Include="Commands\IRespCommand.cs" />
     <Compile Include="Mina\RespPartDecoder.cs" />
     <Compile Include="Mina\RespPartEncoder.cs" />
     <Compile Include="Mina\RespProtocolFactory.cs" />

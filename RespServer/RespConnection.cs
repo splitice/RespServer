@@ -13,13 +13,13 @@ namespace RespServer
     {
         private IoSession _socket;
         public event EventHandler<EventArgs> OnDisconnect; 
-        private CommandRegistry _commands;
+        private RespCommandRegistry _respCommands;
         private RespParser _parser = new RespParser();
 
-        public RespConnection(IoSession socket, CommandRegistry commands)
+        public RespConnection(IoSession socket, RespCommandRegistry respCommands)
         {
             _socket = socket;
-            _commands = commands;
+            _respCommands = respCommands;
         }
 
         internal void HandleDisconnect()
@@ -37,7 +37,7 @@ namespace RespServer
                     return new List<RespPart> {RespPart.Error("The command must be supplied as a string")};
                 }
                 var commandString = Encoding.ASCII.GetString(commandName);
-                var command = _commands.NewCommand(commandString, response.Skip(1).ToList());
+                var command = _respCommands.NewCommand(commandString, response.Skip(1).ToList());
                 if (command == null)
                 {
                     return new List<RespPart>

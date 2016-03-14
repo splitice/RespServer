@@ -13,7 +13,7 @@ namespace RespServer.Example
     {
         static void Main(string[] args)
         {
-            var registry = new CommandRegistry();
+            var registry = new RespCommandRegistry();
             RespServerListener server = new RespServerListener(registry);
             server.Start(new IPEndPoint(IPAddress.Any, 7777));
             while (server.Started)

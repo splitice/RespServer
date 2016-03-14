@@ -16,14 +16,14 @@ namespace RespServer
 {
     public class RespServerListener
     {
-        private readonly CommandRegistry _commands;
+        private readonly RespCommandRegistry _respCommands;
         private IoAcceptor _server;
         private Dictionary<IoSession,RespConnection> _connections = new Dictionary<IoSession, RespConnection>();
         public bool Started;
 
-        public RespServerListener(CommandRegistry commands)
+        public RespServerListener(RespCommandRegistry respCommands)
         {
-            _commands = commands;
+            _respCommands = respCommands;
             _server = new AsyncSocketAcceptor();
         }
 
@@ -36,7 +36,7 @@ namespace RespServer
 
             _server.SessionOpened += (s,e) =>
             {
-                RespConnection connection = new RespConnection(e.Session, _commands);
+                RespConnection connection = new RespConnection(e.Session, _respCommands);
                 _connections.Add(e.Session,connection);
                 connection.OnDisconnect += (a, b) => _connections.Remove(e.Session);
             };
