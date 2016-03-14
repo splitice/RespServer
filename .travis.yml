@@ -8,9 +8,12 @@ addons:
   apt:
     packages:
     - realpath
+    - nunit-console 
 install:
   - sudo modprobe ip_conntrack
 script:
+  - bash travis-ci/autoversion.sh RespServer
+  - export EnableNuGetPackageRestore=false
   - travis_retry mono .nuget/NuGet.exe restore RespServer.sln
   - xbuild /p:Configuration=Release RespServer.sln
   - xbuild /p:Configuration=Debug RespServer.sln
