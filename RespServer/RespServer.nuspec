@@ -6,7 +6,7 @@
 		<title>RespServer</title>
 		<authors>SplitIce</authors>
 		<owners>SplitIce</owners>
-		<projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
+		<projectUrl>https://github.com/splitice/RespServer</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Redis (RESP) Server / Protocol</description>
 		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
