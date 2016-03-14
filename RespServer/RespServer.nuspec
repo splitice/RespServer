@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+		<id>RespServer</id>
+		<version>$version$</version>
+		<title>RespServer</title>
+		<authors>SplitIce</authors>
+		<owners>SplitIce</owners>
+		<projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Redis (RESP) Server / Protocol</description>
+		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
+		<copyright>Copyright Never</copyright>
+		<language>en-US</language>
+		<dependencies> 
+			<dependency id="Mina" />
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="bin/Release/RespServer.dll" target="lib" />
+	</files>
+</package>

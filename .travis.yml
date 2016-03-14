@@ -1,0 +1,14 @@
+language: csharp
+solution: RespServer.sln
+mono:
+  - latest
+git:
+  depth: 300
+install:
+  - sudo modprobe ip_conntrack
+script:
+  - travis_retry mono .nuget/NuGet.exe restore RespServer.sln
+  - xbuild /p:Configuration=Release RespServer.sln
+  - xbuild /p:Configuration=Debug RespServer.sln
+  - nunit-console -framework=4.0 ./RespServer.Tests/bin/Debug/RespServer.Tests.dll -exclude Integration,NotWorkingOnMono
+  - travis_retry bash travis-ci/nuget-upload.sh RespServer
