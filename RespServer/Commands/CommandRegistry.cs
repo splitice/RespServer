@@ -12,7 +12,7 @@ namespace RespServer.Commands
         public ICommand NewCommand(String name, List<object> arguments)
         {
             Func<List<object>, ICommand> command;
-            if (_commands.TryGetValue(name, out command))
+            if (_commands.TryGetValue(name.ToUpperInvariant(), out command))
             {
                 return command(arguments);
             }
@@ -21,7 +21,7 @@ namespace RespServer.Commands
 
         public void RegisterCommand(String name, Func<List<object>, ICommand> creation)
         {
-            _commands.Add(name, creation);
+            _commands.Add(name.ToUpperInvariant(), creation);
         }
     }
 }

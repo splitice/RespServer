@@ -80,7 +80,7 @@ namespace RespServer
             {
                 foreach (var output in outputParts)
                 {
-                    _socket.Write(output).Await();
+                    _socket.Write(output);
                 }
             }
         }

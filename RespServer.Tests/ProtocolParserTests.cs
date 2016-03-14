@@ -13,14 +13,74 @@ namespace RespServer.Tests
     {
         private List<RespPart> ToParts(List<RespMarker> markers)
         {
-            List<RespPart> ret = new List<RespPart>();
-            foreach (var m in markers)
-            {
-                var body = new byte[m.Length];
-                ret.Add(new RespPart(m, body));
-            }
-            return ret;
+            return markers.Select(ToPart).ToList();
         }
+
+        private RespPart ToPart(RespMarker marker)
+        {
+            byte[] body;
+            if (marker.Type == RespMarker.MarkerType.String || marker.Type == RespMarker.MarkerType.SimpleString)
+            {
+                body = new byte[marker.Length];
+            }
+            else if (marker.Type == RespMarker.MarkerType.Integer)
+            {
+                body = Encoding.ASCII.GetBytes("1");
+            }
+            else if (marker.Type == RespMarker.MarkerType.Array)
+            {
+                body = new byte[]{};
+            }
+            else
+            {
+                throw new Exception("No ToParts definition of type");
+            }
+            return new RespPart(marker, body);
+        }
+
+        [TestCase()]
+        public void TestSimpleStringArray()
+        {
+            List<RespMarker> markers = new List<RespMarker>();
+            markers.Add(new RespMarker(RespMarker.MarkerType.Array, 3));
+            markers.Add(new RespMarker(RespMarker.MarkerType.SimpleString, 1));
+            markers.Add(new RespMarker(RespMarker.MarkerType.SimpleString, 1));
+            markers.Add(new RespMarker(RespMarker.MarkerType.SimpleString, 1));
+            var parts = ToParts(markers);
+
+            RespParser parser = new RespParser();
+            Assert.IsNull(parser.MessageHandle(parts[0]));
+            Assert.IsNull(parser.MessageHandle(parts[1]));
+            Assert.IsNull(parser.MessageHandle(parts[2]));
+            var result = parser.MessageHandle(parts[3]);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(3, result.Count);
+            Assert.IsTrue(result[0].GetType() == typeof(byte[]));
+        }
+
+
+        [TestCase()]
+        public void TestIntArray()
+        {
+            List<RespPart> parts = new List<RespPart>();
+            parts.Add(ToPart(new RespMarker(RespMarker.MarkerType.Array, 3)));
+            parts.Add(ToPart(new RespMarker(RespMarker.MarkerType.Integer, 0)));
+            parts.Add(ToPart(new RespMarker(RespMarker.MarkerType.Integer, 0)));
+            parts.Add(ToPart(new RespMarker(RespMarker.MarkerType.Integer, 0)));
+
+            RespParser parser = new RespParser();
+            Assert.IsNull(parser.MessageHandle(parts[0]));
+            Assert.IsNull(parser.MessageHandle(parts[1]));
+            Assert.IsNull(parser.MessageHandle(parts[2]));
+            var result = parser.MessageHandle(parts[3]);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(3, result.Count);
+            Assert.IsTrue(result[0] is int);
+            Assert.AreEqual(1,result[0]);
+        }
+
         [TestCase()]
         public void TestStringArray()
         {
@@ -66,19 +126,6 @@ namespace RespServer.Tests
             Assert.IsNotNull(innerArray);
             Assert.AreEqual(3, innerArray.Count);
             Assert.IsTrue(innerArray[0].GetType() == typeof(byte[]));
-        }
-
-        [TestCase()]
-        private void TestStringDeserialize1()
-        {
-            String input = "$10\r\n0123456789\r\n";
-
-
-        }
-        [TestCase()]
-        private void TestStringDeserialize2()
-        {
-            String input = "$10\r\n0123456789";
         }
     }
 }

@@ -34,7 +34,13 @@ namespace RespServer.Protocol
                     return Body.ToArray();
 
                 case RespMarker.MarkerType.String:
-                    return Body.ToArray();
+                    return Body.TakeWhile((a) => a != '\r' && a != '\n').ToArray();
+
+                case RespMarker.MarkerType.Integer:
+                    return int.Parse(Encoding.ASCII.GetString(Body.ToArray()));
+
+                case RespMarker.MarkerType.SimpleString:
+                    return Body.TakeWhile((a)=>a!='\r' && a != '\n').ToArray();
             }
 
             return null;
@@ -43,6 +49,11 @@ namespace RespServer.Protocol
         public static RespPart Error(String str)
         {
             byte[] data = Encoding.ASCII.GetBytes(str);
+            bool containsNl = data.Any((a) => a == '\n');
+            if (containsNl)
+            {
+                return new RespPart(new RespMarker(RespMarker.MarkerType.String, data.Length), data);
+            }
             return new RespPart(new RespMarker(RespMarker.MarkerType.Error, data.Length), data);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,8 @@ namespace RespServer.Mina
                 return MessageDecoderResult.NeedData;
             }
 
-            var marker = Parse(chars.Dequeue);
+            byte[] line;
+            var marker = Parse(chars.Dequeue, out line);
 
             if (input.Remaining < marker.ReadLength)
             {
@@ -42,42 +44,38 @@ namespace RespServer.Mina
             return MessageDecoderResult.OK;
         }
 
-        private RespMarker Parse(Func<byte> input)
+        private RespMarker Parse(Func<byte> input, out byte[] header)
         {
-            var header = new StringBuilder();
             byte type = input();
             byte i;
 
-            do
+            using (var ms = new MemoryStream())
             {
-                i = input();
-                header.Append((char)i);
-            } while (i != '\n');
+                do
+                {
+                    i = input();
+                    ms.WriteByte(i);
+                } while (i != '\n');
 
-            int headerEnd;
-            if (header[header.Length - 2] == '\r')
-            {
-                headerEnd = header.Length - 2;
-            }
-            else
-            {
-                headerEnd = header.Length - 1;
+                ms.Position = 0;
+                header = ms.ToArray();
             }
 
-            return RespMarker.ReadMarker(type, header.ToString(0, headerEnd));
+            return RespMarker.ReadMarker(type, header);
         }
 
         public MessageDecoderResult Decode(IoSession session, IoBuffer input, IProtocolDecoderOutput output)
         {
+            byte[] line;
             var marker = Parse(() =>
             {
                 return input.Get();
-            });
+            }, out line);
 
             IEnumerable<byte> body;
             if (marker.ReadLine)
             {
-                body = new byte[] { };
+                body = line;
             }
             else
             {
