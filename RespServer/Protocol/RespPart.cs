@@ -67,10 +67,20 @@ namespace RespServer.Protocol
             return Encoding.ASCII.GetBytes(ret);
         }
 
+        public static RespPart String(byte[] data)
+        {
+            return new RespPart(new RespMarker(RespMarker.MarkerType.String, data.Length), data);
+        }
+
         public static RespPart String(string str)
         {
             byte[] data = Encoding.ASCII.GetBytes(str);
-            return new RespPart(new RespMarker(RespMarker.MarkerType.String, data.Length), data);
+            return String(data);
+        }
+
+        public static RespPart Array(int n)
+        {
+            return new RespPart(new RespMarker(RespMarker.MarkerType.Array, n), new byte[]{});
         }
     }
 }
