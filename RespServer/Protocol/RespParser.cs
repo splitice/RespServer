@@ -43,6 +43,10 @@ namespace RespServer.Protocol
                 {
                     if (_stack.Count == 0)
                     {
+                        if (message.Marker.Type == RespMarker.MarkerType.Error)
+                        {
+                            return null;
+                        }
                         throw new Exception("Must be an array on the outer");
                     }
 
@@ -76,7 +80,13 @@ namespace RespServer.Protocol
 
         public List<object> MessageHandle(RespPart message)
         {
-            return MessageHandleInternal(message) as List<object>;
+            var ret =  MessageHandleInternal(message) as List<object>;
+            if (ret != null)
+            {
+                _currentState = null;
+                _stack.Clear();
+            }
+            return ret;
         }
     }
 }
