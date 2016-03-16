@@ -56,5 +56,11 @@ namespace RespServer
 
             Started = true;
         }
+
+        public void Stop()
+        {
+            _server.Unbind();
+            Started = false;
+        }
     }
 }
