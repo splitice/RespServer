@@ -34,7 +34,7 @@ namespace RespServer.Protocol
                     return Body.ToArray();
 
                 case RespMarker.MarkerType.String:
-                    return Body.TakeWhile((a) => a != '\r' && a != '\n').ToArray();
+                    return Body.ToArray();
 
                 case RespMarker.MarkerType.Integer:
                     return int.Parse(Encoding.ASCII.GetString(Body.ToArray()));
