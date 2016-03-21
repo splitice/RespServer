@@ -35,8 +35,13 @@ namespace RespServer.Mina
 
             byte[] line;
             var marker = Parse(chars.Dequeue, out line);
+            if (marker.Type == RespMarker.MarkerType.Empty)
+            {
+                return MessageDecoderResult.OK;
+            }
 
-            if (input.Remaining < marker.ReadLength)
+            var readLength = marker.ReadLength;
+            if (readLength != 0 && input.Remaining < readLength + 1)
             {
                 return MessageDecoderResult.NeedData;
             }
@@ -47,6 +52,12 @@ namespace RespServer.Mina
         private RespMarker Parse(Func<byte> input, out byte[] header)
         {
             byte type = input();
+            if (type == '\r' || type == '\n')
+            {
+                header = null;
+                return new RespMarker(RespMarker.MarkerType.Empty, 0);
+            }
+
             byte i;
 
             using (var ms = new MemoryStream())
@@ -71,6 +82,10 @@ namespace RespServer.Mina
             {
                 return input.Get();
             }, out line);
+            if (marker.Type == RespMarker.MarkerType.Empty)
+            {
+                return MessageDecoderResult.OK;
+            }
 
             IEnumerable<byte> body;
             if (marker.ReadLine)
@@ -79,7 +94,20 @@ namespace RespServer.Mina
             }
             else
             {
-                body = input.GetSlice(marker.ReadLength).GetRemaining();
+                if (marker.ReadLength == 0)
+                {
+                    body = new byte[0];
+                }
+                else
+                {
+                    body = input.GetSlice(marker.ReadLength).GetRemaining();
+
+                    byte nl = input.Get();
+                    if (nl != '\r' && nl != '\n')
+                    {
+                        return MessageDecoderResult.NotOK;
+                    }
+                }
             }
 
             output.Write(new RespPart(marker, body));

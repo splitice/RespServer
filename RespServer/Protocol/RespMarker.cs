@@ -6,7 +6,7 @@ namespace RespServer.Protocol
     {
         public enum MarkerType
         {
-            Array, String, Integer, SimpleString, Error, Null
+            Array, String, Integer, SimpleString, Error, Null, Empty
         }
 
         public MarkerType Type;
