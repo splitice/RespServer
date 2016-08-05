@@ -64,6 +64,7 @@
     <Compile Include="Mina\RespPartEncoder.cs" />
     <Compile Include="Mina\RespProtocolFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\RespPartClose.cs" />
     <Compile Include="Protocol\RespEvent.cs" />
     <Compile Include="RespConnection.cs" />
     <Compile Include="Protocol\RespMarker.cs" />

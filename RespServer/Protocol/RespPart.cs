@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mina.Core.Session;
 
 namespace RespServer.Protocol
 {
@@ -81,6 +82,11 @@ namespace RespServer.Protocol
         public static RespPart Array(int n)
         {
             return new RespPart(new RespMarker(RespMarker.MarkerType.Array, n), new byte[]{});
+        }
+
+        public virtual void Write(IoSession socket)
+        {
+            socket.Write(this);
         }
     }
 }

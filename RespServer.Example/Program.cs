@@ -19,10 +19,18 @@ namespace RespServer.Example
                 return new[] { RespPart.String("Hello World") };
             }
         }
+        class QuitCommand : IRespCommand
+        {
+            public IEnumerable<RespPart> Execute(RespConnection connection)
+            {
+                return new[] { RespPartClose.String("OK") };
+            }
+        }
         static void Main(string[] args)
         {
             var registry = new RespCommandRegistry();
-            registry.RegisterCommand("HELLO", (a)=>new HelloCommand());
+            registry.RegisterCommand("HELLO", (a) => new HelloCommand());
+            registry.RegisterCommand("QUIT", (a) => new QuitCommand());
             RespServerListener server = new RespServerListener(registry);
             server.Start(new IPEndPoint(IPAddress.Any, 7777));
             while (server.Started)

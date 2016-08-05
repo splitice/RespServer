@@ -86,7 +86,7 @@ namespace RespServer
             {
                 foreach (var output in outputParts)
                 {
-                    _socket.Write(output);
+                    output.Write(_socket);
                 }
             }
         }
